@@ -1,0 +1,27 @@
+{
+  "name": "gamelibrarytracker_webapi",
+  "version": "1.0.0",
+  "description": "High level Concept: This game library tracker allows user to track the games they have played, currentlplaying, or plan to play in the future (wishlist). User can keep track of each game's status, rating, and notes.  y",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nguyench4u/GameLibraryTracker_WebAPI.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nguyench4u/GameLibraryTracker_WebAPI/issues"
+  },
+  "homepage": "https://github.com/nguyench4u/GameLibraryTracker_WebAPI#readme",
+  "dependencies": {
+    "body-parser": "^2.2.2",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "mongoose": "^9.5.0"
+  }
+}
