@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const GameSchema = new mongoose.Schema({
     title: { type: String, required: true },
     platform: { type: String, required: true },
-    genre: { type: String},
+    genre: [{ type: String }],
     status: { type: String, enum: ['wishlist', 'playing', 'completed', 'dropped'], default: 'wishlist' },
     rating: { type: Number, min: 1, max: 10 },
     notes: { type: String },
