@@ -3,6 +3,7 @@
 // Where Express App is created
 // Where we connect to the database
 // Where we set up our routes
+// Where we start the server (at the bottom)
 
 
 // Package Imports
@@ -12,7 +13,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 require('dotenv').config();
 
-const Game = require('./models/Games'); // import Game model
+const Game = require('./Games.js'); // import Game model
 
 
 // Create Express App
@@ -22,7 +23,7 @@ app.use(bodyParser.json());
 
 
 // Connect to MongoDB
-mongoose.connect(process.env.DB, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.DB)
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('Could not connect to MongoDB:', err));
 
@@ -74,3 +75,21 @@ app.put('/api/games/:id', async (req, res) => {
 });
 
 // Delete a game
+app.delete('/api/games/:id', async (req, res) => {
+    try {
+        const game = await Game.findByIdAndDelete(req.params.id);
+        // Check if game exists
+        if (!game) return res.status(404).json({ success: false, error: 'Game not found' });
+        res.json({ success: true, message: 'Game deleted' });
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
+// Start the server
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+});
