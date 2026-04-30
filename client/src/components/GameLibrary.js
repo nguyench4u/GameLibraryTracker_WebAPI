@@ -5,6 +5,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Button, ButtonGroup } from 'react-bootstrap';
 import { fetchGames } from '../actions/gameActions';
+import GameCard from './GameCard';
 
 const STATUS_FILTERS = ['all', 'wishlist', 'playing', 'completed', 'dropped'];
 
@@ -24,15 +25,21 @@ const GameLibrary = () => {
         <Container className="mt-4">
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2>My Game Library</h2>
-                <Button variant="success">+ Add Game</Button>
+                <Button style={{ backgroundColor: '#a6d189', borderColor: '#a6d189', color: '#292c3c', fontWeight: 'bold' }}>
+                    + Add Game
+                </Button>
             </div>
 
             <ButtonGroup className="mb-4">
                 {STATUS_FILTERS.map(filter => (
                     <Button
                         key={filter}
-                        variant={statusFilter === filter ? 'dark' : 'outline-dark'}
-                        style={{ textTransform: 'capitalize' }}
+                        style={{
+                            backgroundColor: statusFilter === filter ? '#8caaee' : 'transparent',
+                            borderColor: '#8caaee',
+                            color: statusFilter === filter ? '#292c3c' : '#8caaee',
+                            textTransform: 'capitalize'
+                        }}
                     >
                         {filter}
                     </Button>
@@ -41,9 +48,9 @@ const GameLibrary = () => {
 
             <div>
                 {filteredGames.length === 0
-                    ? <p className="text-muted">No games found.</p>
+                    ? <p style={{ opacity: 0.6 }}>No games found.</p>
                     : filteredGames.map(game => (
-                        <div key={game._id}>{game.title}</div>
+                        <GameCard key={game._id} game={game} onEdit={() => {}} />
                     ))
                 }
             </div>
