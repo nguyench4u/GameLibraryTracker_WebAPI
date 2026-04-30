@@ -13,8 +13,10 @@ const STATUS_COLORS = {
     dropped:   { bg: '#e78284', text: '#292c3c' }
 };
 
+// GameCard Object passed for GameLibrary to display each game with edit and delete options
+// Accepts game object (MongoDB doc) and onEdit function (selected/edit mode) as props
 const GameCard = ({ game, onEdit }) => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch(); // send actions to the Redux store (delete button)
     const statusColor = STATUS_COLORS[game.status] || { bg: '#b5bfe2', text: '#292c3c' };
 
     return (
@@ -22,24 +24,24 @@ const GameCard = ({ game, onEdit }) => {
             <Card.Body>
                 <div className="d-flex justify-content-between align-items-start">
                     <div>
-                        <Card.Title>{game.title}</Card.Title>
+                        <Card.Title>{game.title}</Card.Title> {/* Minecraft */}
                         <Card.Subtitle className="mb-2" style={{ color: '#8caaee' }}>
-                            {game.platform}{game.genre && game.genre.length > 0 && ` — ${game.genre.join(', ')}`}
+                            {game.platform}{game.genre && game.genre.length > 0 && ` - ${game.genre.join(', ')}`} {/* PC - Adventure, Sandbox */}
                         </Card.Subtitle>
                         <span
                             className="mb-2 d-inline-block px-2 py-1 rounded"
                             style={{ backgroundColor: statusColor.bg, color: statusColor.text, fontSize: '0.8rem', textTransform: 'capitalize' }}
                         >
-                            {game.status}
+                            {game.status} {/* Playing */}
                         </span>
-                        {game.rating && <p className="mb-1 mt-2">Rating: <strong style={{ color: '#ca9ee6' }}>{game.rating} / 10</strong></p>}
+                        {game.rating && <p className="mb-1 mt-2">Rating: <strong style={{ color: '#f4b8e4' }}>{game.rating} / 10</strong></p>}
                         {game.notes && <p className="mb-0 mt-1" style={{ opacity: 0.8 }}>{game.notes}</p>}
                     </div>
                     <div className="d-flex gap-2">
                         <Button
                             size="sm"
                             style={{ backgroundColor: 'transparent', borderColor: '#ca9ee6', color: '#ca9ee6' }}
-                            onClick={() => onEdit(game)}
+                            onClick={() => onEdit(game)} 
                         >
                             Edit
                         </Button>

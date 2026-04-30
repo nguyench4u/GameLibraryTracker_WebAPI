@@ -10,7 +10,7 @@ import GameCard from './GameCard';
 const STATUS_FILTERS = ['all', 'wishlist', 'playing', 'completed', 'dropped'];
 
 const GameLibrary = () => {
-    const dispatch = useDispatch();
+    const dispatch = useDispatch(); // send actions to the Redux store (fetching games on component mount)
     const { games, statusFilter } = useSelector(state => state);
 
     useEffect(() => {
@@ -48,7 +48,7 @@ const GameLibrary = () => {
 
             <div>
                 {filteredGames.length === 0
-                    ? <p style={{ opacity: 0.6 }}>No games found.</p>
+                    ? <p style={{ color: '#b5bfe2', opacity: 0.6 }}>No games found.</p>
                     : filteredGames.map(game => (
                         <GameCard key={game._id} game={game} onEdit={() => {}} />
                     ))

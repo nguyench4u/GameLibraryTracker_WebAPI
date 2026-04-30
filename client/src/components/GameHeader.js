@@ -9,7 +9,7 @@ const GameHeader = () => {
         <Navbar variant="dark" style={{ backgroundColor: '#292c3c', borderBottom: '2px solid #8caaee' }}>
             <Container>
                 <Navbar.Brand style={{ color: '#8caaee', fontWeight: 'bold', fontSize: '1.4rem' }}>
-                    🎮 Game Library Tracker
+                    Game Library Tracker
                 </Navbar.Brand>
             </Container>
         </Navbar>
