@@ -1,47 +1,59 @@
-// UI Item #4: AddGameModal.js
-// AddGameModal provides a popup form to add a new game to the library
+// UI Item #4: EditGameModal.js
+// EditGameModal provides a popup form to edit an existing game in the library
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useDispatch } from 'react-redux';
-import { addGame } from '../actions/gameActions';
+import {updateGame } from '../actions/gameActions';
 
-const AddGameModal = ({ show, onHide }) => {
-    const dispatch = useDispatch(); // send action to the Redux store (adding new game)
+const EditGameModal = ({ show, onHide, game }) => {
+    const dispatch = useDispatch(); // send action to the Redux store (editing game)
     const [formData, setFormData] = useState({
         title: '',
         platform: '',
-        genre: '',
-        status: 'wishlist',
+        genre: '', 
+        status: '', 
         rating: '',
         notes: '',
         imageUrl: ''
     });
 
+    useEffect(() => { // Check
+        if (game) {
+            setFormData({
+                title: game.title || '',
+                platform: game.platform || '',
+                genre: game.genre ? game.genre.join(', ') : '', // Convert genre array to comma-separated string for form input
+                status: game.status || 'wishlist',
+                rating: game.rating || '',
+                notes: game.notes || '',
+                imageUrl: game.imageUrl || ''
+            })
+        }
+    }, [game]);
 
-    const handleChange = (e) => { // update form data state on input change 
+    const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
+    }
 
-    const handleSubmit = (e) => { // dispatch addGame action 
-        e.preventDefault(); // prevent default form submission behavior
-        const newGame = {
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        const updatedGame = {
             ...formData, 
             genre: formData.genre ? formData.genre.split(',').map(g => g.trim()) : [], // convert comma-separate genres
             rating: formData.rating ? Number(formData.rating) : undefined // convert to number or undefined if empty
         };
-        dispatch(addGame(newGame)); // Reset form and close after dispatching action
-        setFormData({ title: '', platform: '', genre: '', status: 'wishlist', rating: '', notes: '', imageUrl: '' });
-        onHide();
+        dispatch(updateGame(game._id, updatedGame)); // Dispatch updateGame action with game ID and updated data
+        setFormData({ title: game.title || '', platform: game.platform || '', genre: game.genre || '', status: game.status || '', rating: game.rating || '', notes: game.notes || '', imageUrl: game.imageUrl || '' }); // Reset form data to current selected game data
+        onHide(); // Close the modal after submitting
     };
-
 
 
     return (
         <Modal show={show} onHide={onHide}>
             <Modal.Header closeButton className="btn-close-white" style={{ backgroundColor: '#292c3c', color: '#f0f0f8', borderColor: '#8caaee' }}>
-                <Modal.Title>Add New Game</Modal.Title>
-            </Modal.Header>
+                <Modal.Title>Edit Game Details </Modal.Title>
+            </Modal.Header>        
 
             <Modal.Body style={{ backgroundColor: '#292c3c', color: '#f0f0f8' }}>
                 <Form onSubmit={handleSubmit}>
@@ -91,8 +103,8 @@ const AddGameModal = ({ show, onHide }) => {
                         <Button variant="secondary" onClick={onHide}>
                             Cancel
                         </Button>
-                        <Button style={{ backgroundColor: '#a6d189', color: '#292c3c' }} type="submit">
-                            Add Game
+                        <Button style={{ backgroundColor: '#8caaee', color: '#292c3c' }} type="submit">
+                            Save Changes
                         </Button>
                     </div>
 
@@ -101,6 +113,8 @@ const AddGameModal = ({ show, onHide }) => {
 
         </Modal>
     )
+
+
 };
 
-export default AddGameModal;
+export default EditGameModal;

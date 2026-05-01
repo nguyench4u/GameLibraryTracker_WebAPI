@@ -1,7 +1,7 @@
 // gameActions.js
 // Actions are functions that return an object that contains a type and an optional payload
 // These objects are dispatched to the Redux store to trigger state changes
-// AKA the actual API calls
+// AKA the actual API calls: addGame, updateGame, deleteGame, fetchGames
 
 import { FETCH_GAMES } from '../constants/actionTypes';
 

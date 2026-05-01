@@ -7,6 +7,7 @@ import { Container, Button, ButtonGroup } from 'react-bootstrap';
 import { fetchGames } from '../actions/gameActions';
 import GameCard from './GameCard';
 import AddGameModal from './AddGameModal';
+import EditGameModal from './EditGameModal';
 
 const STATUS_FILTERS = ['all', 'wishlist', 'playing', 'completed', 'dropped'];
 
@@ -14,6 +15,8 @@ const GameLibrary = () => {
     const dispatch = useDispatch(); // send actions to the Redux store (fetching games on component mount)
     const { games, statusFilter } = useSelector(state => state);
     const [showAddModal, setShowAddModal] = useState(false); // local state to change modal visibility
+    const [showEditModal, setShowEditModal] = useState(false); // local state to change edit modal visibility
+    const [selectedGame, setSelectedGame] = useState(null); // local state to store the game being edited
 
     useEffect(() => {
         dispatch(fetchGames());
@@ -54,12 +57,19 @@ const GameLibrary = () => {
                 {filteredGames.length === 0
                     ? <p style={{ color: '#b5bfe2', opacity: 0.6 }}>No games found.</p>
                     : filteredGames.map(game => (
-                        <GameCard key={game._id} game={game} onEdit={() => {}} />
+                        <GameCard 
+                            key={game._id} 
+                            game={game}
+                            onEdit={(game) => { // Set selected game and show edit modal when Edit button is clicked in GameCard
+                                setSelectedGame(game);
+                                setShowEditModal(true);
+                            }} />
                     ))
                 }
             </div>
 
             <AddGameModal show={showAddModal} onHide={() => setShowAddModal(false)} /> {/* Show Add Game modal if showAddModal is true */}
+            <EditGameModal show={showEditModal} onHide={() => setShowEditModal(false)} game={selectedGame} /> {/* Show Edit Game modal if showEditModal is true, pass selected game as prop */}
         </Container>
     );
 };
