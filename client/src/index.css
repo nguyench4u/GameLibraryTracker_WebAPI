@@ -8,6 +8,7 @@ body {
   background-color: #414559;
   min-height: 100vh;
   color: #f0f0f8;
+  overflow-y: scroll;
 }
 
 ::placeholder {

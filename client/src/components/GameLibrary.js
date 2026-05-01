@@ -18,14 +18,16 @@ const GameLibrary = () => {
     const [showEditModal, setShowEditModal] = useState(false); // local state to change edit modal visibility
     const [selectedGame, setSelectedGame] = useState(null); // local state to store the game being edited
     const [searchQuery, setSearchQuery] = useState(''); // local state to store search query
+    const [sortBy, setSortBy] = useState('none'); // local state for sort option
 
 
     useEffect(() => {
         dispatch(fetchGames());
     }, [dispatch]);
 
+    // For Status Button Group and Search Bar
     const filteredGames = (statusFilter === 'all' ? games : games.filter(game => game.status === statusFilter))
-        .filter(game => { // Add Filter by search query (title and notes)
+        .filter(game => { // Filter by search query (title, notes, and genre)
             if (!searchQuery) return true; // If search query is empty, include all games
             const query = searchQuery.toLowerCase();
             return (
@@ -33,15 +35,22 @@ const GameLibrary = () => {
                 (game.notes && game.notes.toLowerCase().includes(query)) ||
                 (game.genre && game.genre.join(', ').toLowerCase().includes(query))
             );
-        
         });
+
+    // For Sort Dropdown
+    const sortedGames = [...filteredGames].sort((a, b) => {
+        if (sortBy === 'alphabetical') return a.title.localeCompare(b.title);
+        if (sortBy === 'rating-high') return (b.rating || 0) - (a.rating || 0);
+        if (sortBy === 'rating-low') return (a.rating || 0) - (b.rating || 0);
+        return 0; // 'none' — keep original order
+    });
 
 
     return (
         <Container className="mt-4">
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2>My Game Library</h2>
-                <div className="d-flex gap-4">
+                <div className="d-flex gap-2">
                     <Form.Control
                         type="text"
                         placeholder="Search by title or description..."
@@ -57,27 +66,39 @@ const GameLibrary = () => {
                 </div>
             </div>
 
-            <ButtonGroup className="mb-4">
-                {STATUS_FILTERS.map(filter => (
-                    <Button
-                        key={filter}
-                        onClick={() => dispatch(setFilter(filter))}
-                        style={{
-                            backgroundColor: statusFilter === filter ? '#8caaee' : 'transparent',
-                            borderColor: '#8caaee',
-                            color: statusFilter === filter ? '#292c3c' : '#8caaee',
-                            textTransform: 'capitalize'
-                        }}
-                    >
-                        {filter}
-                    </Button>
-                ))}
-            </ButtonGroup>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <ButtonGroup>
+                    {STATUS_FILTERS.map(filter => (
+                        <Button
+                            key={filter}
+                            onClick={() => dispatch(setFilter(filter))}
+                            style={{
+                                backgroundColor: statusFilter === filter ? '#8caaee' : 'transparent',
+                                borderColor: '#8caaee',
+                                color: statusFilter === filter ? '#292c3c' : '#8caaee',
+                                textTransform: 'capitalize'
+                            }}
+                        >
+                            {filter}
+                        </Button>
+                    ))}
+                </ButtonGroup>
+                <Form.Select // Dropdown for sorting options
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value)}
+                    style={{ backgroundColor: '#292c3c', color: '#f0f0f8', borderColor: '#8caaee', width: '160px', padding: '6px 10px' }}
+                >
+                    <option value="none">Sort by...</option>
+                    <option value="alphabetical">A to Z</option>
+                    <option value="rating-high">Rating: High to Low</option>
+                    <option value="rating-low">Rating: Low to High</option>
+                </Form.Select>
+            </div>
 
             <div>
                 {filteredGames.length === 0
                     ? <p style={{ color: '#b5bfe2', opacity: 0.6 }}>No games found.</p>
-                    : filteredGames.map(game => (
+                    : sortedGames.map(game => (
                         <GameCard 
                             key={game._id} 
                             game={game}
