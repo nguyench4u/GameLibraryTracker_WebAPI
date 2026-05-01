@@ -3,7 +3,7 @@
 // These objects are dispatched to the Redux store to trigger state changes
 // AKA the actual API calls: addGame, updateGame, deleteGame, fetchGames
 
-import { FETCH_GAMES } from '../constants/actionTypes';
+import { FETCH_GAMES, SET_FILTER } from '../constants/actionTypes';
 
 const API_URL = process.env.REACT_APP_API_URL; // Get the API URL from environment variables
 
@@ -17,7 +17,10 @@ export const fetchGames = () => async (dispatch) => {
         console.error('Error fetching games: ', err);
     }
 }; 
-
+// setFilter 
+export const setFilter = (filter) => (dispatch) => {
+    dispatch({ type: SET_FILTER, payload: filter });
+}
 
 // addGame
 export const addGame = (gameData) => async (dispatch) => {

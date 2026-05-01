@@ -4,7 +4,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, Button, ButtonGroup } from 'react-bootstrap';
-import { fetchGames } from '../actions/gameActions';
+import { fetchGames, setFilter } from '../actions/gameActions';
 import GameCard from './GameCard';
 import AddGameModal from './AddGameModal';
 import EditGameModal from './EditGameModal';
@@ -41,6 +41,7 @@ const GameLibrary = () => {
                 {STATUS_FILTERS.map(filter => (
                     <Button
                         key={filter}
+                        onClick={() => dispatch(setFilter(filter))}
                         style={{
                             backgroundColor: statusFilter === filter ? '#8caaee' : 'transparent',
                             borderColor: '#8caaee',
