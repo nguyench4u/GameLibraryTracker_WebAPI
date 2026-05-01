@@ -232,8 +232,75 @@ Add this only after core CRUD and deployment are working.
 ```
 
 ---
+<br>
+<br>
 
 ## Notes
 - Status filter is done entirely client-side in Redux — no query params needed initially.
 - Keep all backend routes in `server.js` for simplicity — same flat pattern as prior assignments.
 - `REACT_APP_API_URL` must be set at build time for create-react-app; update it before deploying frontend.
+
+<br>
+<br>
+
+## Additions Outside Original Scope
+
+**`imageUrl` field (Games.js + AddGameModal + EditGameModal + GameCard)**
+- Added `imageUrl: { type: String }` to the Mongoose schema
+- Form field added to both AddGameModal and EditGameModal — accepts any public image URL
+- GameCard displays the image on the right side of the card (fixed 140px wide column)
+- If no image is provided, a placeholder with a game controller icon is shown instead to keep card layout consistent
+- All cards are fixed at 160px height regardless of content
+
+**`genre` changed from String to Array (Games.js)**
+- Originally planned as a single string, changed to `[String]` to support multiple genres per game
+- Form inputs accept comma-separated values and split them into an array on submit
+- EditGameModal joins the array back to a comma-separated string for the form field on load
+
+**Catppuccin Frappé color palette**
+- Custom dark theme applied across all components using the Catppuccin Frappé palette
+- Main bg: `#414559`, card/modal bg: `#292c3c`, text: `#f0f0f8`
+- Status badge colors: wishlist `#babbf1`, playing `#8caaee`, completed `#a6d189`, dropped `#e78284`
+
+---
+<br>
+<br>
+
+## Bonus Features
+
+All three features are client-side only — no new API endpoints needed. All changes go in `GameLibrary.js`.
+
+### Architecture
+Filters and sort stack on top of each other before rendering cards:
+```
+games (Redux)
+  → status filter (Redux)
+  → genre filter (local state)
+  → search filter (local state)
+  → sort (local state)
+  → render GameCards
+```
+
+### Search Bar
+- Local state: `searchQuery = ''`
+- Filters games where `title` or `notes` includes the query (case-insensitive)
+- UI: text input above or next to the status filters
+
+### Sort
+- Local state: `sortBy = 'none'` — options: `alphabetical`, `rating-high`, `rating-low`
+- Applied after all filters via `.sort()` on the filtered array
+- UI: `<Form.Select>` dropdown next to the Add Game button or search bar
+
+### Genre Filter
+- Local state: `selectedGenres = []`
+- Available genres derived by flattening all `game.genre` arrays from Redux and deduplicating
+- Clicking a genre badge toggles it in/out of `selectedGenres`
+- If `selectedGenres` is empty, show all games; otherwise show games that match any selected genre
+- UI: row of clickable genre badges below the status filters, auto-populated from library
+
+### Build Order
+```
+[ ] 1. Search bar — state + filter logic + input UI in GameLibrary
+[ ] 2. Sort — state + sort logic + select UI in GameLibrary
+[ ] 3. Genre filter — derive genres, toggle logic + badge UI in GameLibrary
+```

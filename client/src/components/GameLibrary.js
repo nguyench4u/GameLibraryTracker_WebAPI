@@ -3,7 +3,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Container, Button, ButtonGroup } from 'react-bootstrap';
+import { Container, Button, ButtonGroup, Form } from 'react-bootstrap';
 import { fetchGames, setFilter } from '../actions/gameActions';
 import GameCard from './GameCard';
 import AddGameModal from './AddGameModal';
@@ -17,24 +17,44 @@ const GameLibrary = () => {
     const [showAddModal, setShowAddModal] = useState(false); // local state to change modal visibility
     const [showEditModal, setShowEditModal] = useState(false); // local state to change edit modal visibility
     const [selectedGame, setSelectedGame] = useState(null); // local state to store the game being edited
+    const [searchQuery, setSearchQuery] = useState(''); // local state to store search query
+
 
     useEffect(() => {
         dispatch(fetchGames());
     }, [dispatch]);
 
-    const filteredGames = statusFilter === 'all'
-        ? games
-        : games.filter(game => game.status === statusFilter);
+    const filteredGames = (statusFilter === 'all' ? games : games.filter(game => game.status === statusFilter))
+        .filter(game => { // Add Filter by search query (title and notes)
+            if (!searchQuery) return true; // If search query is empty, include all games
+            const query = searchQuery.toLowerCase();
+            return (
+                game.title.toLowerCase().includes(query) ||
+                (game.notes && game.notes.toLowerCase().includes(query)) ||
+                (game.genre && game.genre.join(', ').toLowerCase().includes(query))
+            );
+        
+        });
+
 
     return (
         <Container className="mt-4">
             <div className="d-flex justify-content-between align-items-center mb-3">
                 <h2>My Game Library</h2>
-                <Button style={{ backgroundColor: '#a6d189', borderColor: '#a6d189', color: '#292c3c', fontWeight: 'bold' }}
-                    onClick={() => setShowAddModal(true)}
-                >
-                    + Add Game
-                </Button>
+                <div className="d-flex gap-4">
+                    <Form.Control
+                        type="text"
+                        placeholder="Search by title or description..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        style={{ backgroundColor: '#292c3c', color: '#f0f0f8', borderColor: '#8caaee', width: '300px' }}
+                    />
+                    <Button style={{ backgroundColor: '#a6d189', borderColor: '#a6d189', color: '#292c3c', fontWeight: 'bold', whiteSpace: 'nowrap' }}
+                        onClick={() => setShowAddModal(true)}
+                    >
+                        + Add Game
+                    </Button>
+                </div>
             </div>
 
             <ButtonGroup className="mb-4">
