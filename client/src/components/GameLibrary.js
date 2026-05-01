@@ -19,6 +19,8 @@ const GameLibrary = () => {
     const [selectedGame, setSelectedGame] = useState(null); // local state to store the game being edited
     const [searchQuery, setSearchQuery] = useState(''); // local state to store search query
     const [sortBy, setSortBy] = useState('none'); // local state for sort option
+    const [selectedGenres, setSelectedGenres] = useState([]); // local state for genre filter
+    const [showGenres, setShowGenres] = useState(false); // local state for genre collapse
 
 
     useEffect(() => {
@@ -45,6 +47,21 @@ const GameLibrary = () => {
         return 0; // 'none' — keep original order
     });
 
+    // Derive unique genres from all games in the library
+    const availableGenres = [...new Set(games.flatMap(game => game.genre || []))].sort();
+
+    // Toggle a genre in/out of selectedGenres
+    const toggleGenre = (genre) => {
+        setSelectedGenres(prev =>
+            prev.includes(genre) ? prev.filter(g => g !== genre) : [...prev, genre]
+        );
+    };
+
+    // Apply genre filter on top of sortedGames
+    const displayedGames = selectedGenres.length === 0
+        ? sortedGames
+        : sortedGames.filter(game => game.genre && selectedGenres.some(g => game.genre.includes(g)));
+
 
     return (
         <Container className="mt-4">
@@ -52,11 +69,12 @@ const GameLibrary = () => {
                 <h2>My Game Library</h2>
                 <div className="d-flex gap-2">
                     <Form.Control
+                        id="search-input"
                         type="text"
                         placeholder="Search by title or description..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        style={{ backgroundColor: '#292c3c', color: '#f0f0f8', borderColor: '#8caaee', width: '300px' }}
+                        style={{ backgroundColor: '#f0f0f8', color: '#292c3c', borderColor: '#8caaee', width: '350px', caretColor: '#292c3c' }}
                     />
                     <Button style={{ backgroundColor: '#a6d189', borderColor: '#a6d189', color: '#292c3c', fontWeight: 'bold', whiteSpace: 'nowrap' }}
                         onClick={() => setShowAddModal(true)}
@@ -83,24 +101,74 @@ const GameLibrary = () => {
                         </Button>
                     ))}
                 </ButtonGroup>
-                <Form.Select // Dropdown for sorting options
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    style={{ backgroundColor: '#292c3c', color: '#f0f0f8', borderColor: '#8caaee', width: '160px', padding: '6px 10px' }}
-                >
-                    <option value="none">Sort by...</option>
-                    <option value="alphabetical">A to Z</option>
-                    <option value="rating-high">Rating: High to Low</option>
-                    <option value="rating-low">Rating: Low to High</option>
-                </Form.Select>
+
+                <div className="d-flex gap-2 align-items-center position-relative">
+                    {/* Genre Selection collapsible */}
+                    {availableGenres.length > 0 && (
+                        <div style={{ position: 'relative' }}>
+                            <div
+                                className="d-flex align-items-center justify-content-between px-3 py-2"
+                                onClick={() => setShowGenres(prev => !prev)}
+                                style={{
+                                    cursor: 'pointer', userSelect: 'none',
+                                    backgroundColor: '#292c3c', borderRadius: '6px',
+                                    border: '1px solid #ca9ee6', color: '#ca9ee6',
+                                    fontWeight: 'bold', width: '200px',
+                                    height: '38px', padding: '6px 10px'
+                                }}
+                            >
+                                Genre Selection {selectedGenres.length > 0 && `(${selectedGenres.length})`}
+                                <span>{showGenres ? '▲' : '▼'}</span>
+                            </div>
+                            {showGenres && (
+                                <div
+                                    className="d-flex flex-wrap gap-2 p-3"
+                                    style={{
+                                        position: 'absolute', right: 0, top: '110%',
+                                        backgroundColor: '#292c3c', border: '1px solid #414559',
+                                        borderRadius: '8px', zIndex: 100, minWidth: '200px'
+                                    }}
+                                >
+                                    {availableGenres.map(genre => (
+                                        <span
+                                            key={genre}
+                                            onClick={() => toggleGenre(genre)}
+                                            style={{
+                                                cursor: 'pointer', padding: '4px 12px',
+                                                borderRadius: '20px', fontSize: '0.85rem',
+                                                backgroundColor: selectedGenres.includes(genre) ? '#ca9ee6' : '#35394d',
+                                                color: selectedGenres.includes(genre) ? '#292c3c' : '#b5bfe2',
+                                                border: '1px solid #ca9ee6', userSelect: 'none'
+                                            }}
+                                        >
+                                            {genre}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Sort dropdown */}
+                    <Form.Select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        style={{ backgroundColor: '#292c3c', color: '#f0f0f8', borderColor: '#8caaee', width: '160px', padding: '6px 10px', height: '38px', borderRadius: '6px' }}
+                    >
+                        <option value="none">Sort by...</option>
+                        <option value="alphabetical">A to Z</option>
+                        <option value="rating-high">Rating: High to Low</option>
+                        <option value="rating-low">Rating: Low to High</option>
+                    </Form.Select>
+                </div>
             </div>
 
             <div>
-                {filteredGames.length === 0
+                {displayedGames.length === 0
                     ? <p style={{ color: '#b5bfe2', opacity: 0.6 }}>No games found.</p>
-                    : sortedGames.map(game => (
-                        <GameCard 
-                            key={game._id} 
+                    : displayedGames.map(game => (
+                        <GameCard
+                            key={game._id}
                             game={game}
                             onEdit={(game) => { // Set selected game and show edit modal when Edit button is clicked in GameCard
                                 setSelectedGame(game);
