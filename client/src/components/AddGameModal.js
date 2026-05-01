@@ -73,7 +73,7 @@ const AddGameModal = ({ show, onHide }) => {
                     </Form.Group>
                     <Form.Group className='mb-3'>
                         <Form.Label className='mb-3'>Rating</Form.Label>
-                        <Form.Control name="rating" value={formData.rating} onChange={handleChange} type="number" min="1" max="10" step="1" placeholder="Rate the game (0-10)" 
+                        <Form.Control name="rating" value={formData.rating} onChange={handleChange} type="number" min="1" max="10" step="1" placeholder="Rate the game (1-10)" 
                         style={{ backgroundColor: '#414559', color: '#f0f0f8', borderColor: '#8caaee' }}/>
                     </Form.Group>
                     <Form.Group className='mb-3'>

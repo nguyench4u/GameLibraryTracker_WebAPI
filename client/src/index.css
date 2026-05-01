@@ -25,3 +25,17 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.modal-content {
+  background-color: #292c3c;
+  border: 1px solid #8caaee;
+  border-radius: 8px;
+}
+
+.modal-header {
+  border-radius: 8px 8px 0 0;
+}
+
+.modal-footer {
+  border-radius: 0 0 8px 8px;
+}
