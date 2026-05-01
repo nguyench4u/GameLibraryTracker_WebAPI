@@ -10,6 +10,11 @@ body {
   color: #f0f0f8;
 }
 
+::placeholder {
+  color: #c6d0f5 !important;
+  opacity: 0.7;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
