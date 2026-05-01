@@ -21,6 +21,14 @@ const GameCard = ({ game, onEdit }) => {
 
     return (
         <Card className="mb-3" style={{ backgroundColor: '#292c3c', borderColor: '#414559', color: '#b5bfe2' }}>
+            {game.imageUrl && (
+                <Card.Img
+                    variant="top"
+                    src={game.imageUrl}
+                    alt={game.title}
+                    style={{ maxHeight: '200px', objectFit: 'cover' }}
+                />
+            )}
             <Card.Body>
                 <div className="d-flex justify-content-between align-items-start">
                     <div>
