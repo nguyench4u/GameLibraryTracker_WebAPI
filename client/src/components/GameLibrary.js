@@ -13,7 +13,7 @@ const STATUS_FILTERS = ['all', 'wishlist', 'playing', 'completed', 'dropped'];
 
 const GameLibrary = () => {
     const dispatch = useDispatch(); // send actions to the Redux store (fetching games on component mount)
-    const { games, statusFilter } = useSelector(state => state);
+    const { games, statusFilter, token } = useSelector(state => state);
     const [showAddModal, setShowAddModal] = useState(false); // local state to change modal visibility
     const [showEditModal, setShowEditModal] = useState(false); // local state to change edit modal visibility
     const [selectedGame, setSelectedGame] = useState(null); // local state to store the game being edited
@@ -24,8 +24,8 @@ const GameLibrary = () => {
 
 
     useEffect(() => {
-        dispatch(fetchGames());
-    }, [dispatch]);
+        if (token) dispatch(fetchGames());
+    }, [dispatch, token]);
 
     // For Status Button Group and Search Bar
     const filteredGames = (statusFilter === 'all' ? games : games.filter(game => game.status === statusFilter))
@@ -62,6 +62,12 @@ const GameLibrary = () => {
         ? sortedGames
         : sortedGames.filter(game => game.genre && selectedGenres.some(g => game.genre.includes(g)));
 
+
+    if (!token) return (
+        <Container className="mt-5 text-center">
+            <p style={{ color: '#b5bfe2', fontSize: '1.1rem' }}>Please log in to view your game library.</p>
+        </Container>
+    );
 
     return (
         <Container className="mt-4">
