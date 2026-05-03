@@ -10,6 +10,7 @@ const GameSchema = new mongoose.Schema({
     notes: { type: String },
     imageUrl: { type: String },
     createdAt: { type: Date, default: Date.now },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Reference to the User who owns this game
 });
 
 module.exports = mongoose.model('Game', GameSchema);
